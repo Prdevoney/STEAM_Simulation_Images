@@ -7,6 +7,10 @@ import os
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    return "Flask server is running!"
+
 # Route definition 
 @app.route("/execute", methods=['POST'])
 def execute_code():
@@ -21,6 +25,7 @@ def execute_code():
     
     try: 
         file.save('temp_code.py')
+        subprocess.run(['chmod','+x', 'temp_code.py'], check=True)
         result = subprocess.run(
             ['python', 'temp_code.py'],
              capture_output=True,
@@ -39,4 +44,4 @@ def execute_code():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
