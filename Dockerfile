@@ -1,5 +1,6 @@
 # Base image: ROS2-Humble distribution, Ubuntu 22.04
-FROM ros:humble-ros-base-jammy
+FROM ros:iron-ros-core-jammy
+
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -31,10 +32,10 @@ RUN apt-get update \
     && curl -fsSL https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
     && apt-get update \
-    && apt-get install -y gz-garden \
+    && apt-get install -y ros-humble-ros-gzgarden \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Turtlebot3 for ROS2
+# Install Turtlebot3 for ROS2 Iron
 RUN apt-get update && apt-get install -y \
     ros-humble-turtlebot3 \
     ros-humble-turtlebot3-msgs \
@@ -42,7 +43,6 @@ RUN apt-get update && apt-get install -y \
     ros-humble-turtlebot3-simulations \
     ros-humble-turtlebot3-navigation2 \
     && rm -rf /var/lib/apt/lists/*
-
 
 # Set up entrypoint
 COPY app.py /root/
