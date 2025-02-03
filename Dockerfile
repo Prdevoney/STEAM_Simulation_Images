@@ -35,11 +35,14 @@ RUN apt-get update \
     && sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
     && curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
-    && sudo apt-get update \
-    && sudo apt-get install -y ignition-fortress
+    && apt-get update \
+    && apt-get install -y ignition-fortress \
+    && apt-get install ros-humble-ros-ign-bridge -y 
 
-# Clone in Husky & Turtlebot3 simulations for ROS2 humble 
-RUN git clone https://github.com/husky/husky.git \
+# Clone in Husky, Turtlebot3, and ur5 packages for ROS2 humble 
+RUN mkdir -p ~/ros2_ws/src \
+    && cd ~/ros2_ws/src \
+    && git clone https://github.com/husky/husky.git \
     && cd husky \
     && git checkout humble-devel \
     && cd .. \
@@ -47,17 +50,14 @@ RUN git clone https://github.com/husky/husky.git \
     && cd turtlebot3 \
     && git checkout humble \
     && cd .. \
-    && git clone https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git \
-    && cd turtlebot3_simulations \
-    && git checkout humble 
+    && git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git \
+    && cd Universal_Robots_ROS2_Driver \
+    && git checkout humble \
+    && cd .. \ 
+    && rosdep install --from-paths . --ignore-src -r -y \
+    && colcon build 
 
-# # Install Turtlebot3 for ROS1 Noetic
-# RUN apt-get update && apt-get install -y \
-#     ros-noetic-turtlebot3 \
-#     ros-noetic-turtlebot3-msgs \
-#     ros-noetic-turtlebot3-gazebo \
-#     ros-noetic-turtlebot3-simulations \
-#     && rm -rf /var/lib/apt/lists/*
+
 
 # Set up entrypoint
 COPY app.py /root/
