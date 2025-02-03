@@ -7,6 +7,23 @@
       <real_time_factor>1.0</real_time_factor>
     </physics>
 
+    <!-- Add essential system plugins -->
+    <plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics">
+    </plugin>
+
+    <plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+    </plugin>
+
+    <plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands">
+    </plugin>
+
     <!-- Scene settings -->
     <scene>
       <ambient>0.8 0.8 0.8 1.0</ambient>
@@ -23,16 +40,17 @@
       <direction>-0.5 0.1 -0.9</direction>
     </light>
 
-    <!-- Ground Plane -->
+    <!-- World -->
     <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
+      <uri>https://fuel.gazebosim.org/1.0/anastasa/worlds/A base on the Moon</uri>
     </include>
 
     <!-- Robot Model -->
+   
     <include>
-      <uri>https://fuel.gazebosim.org/1.0/hexarotor/models/turtlebot3_burger</uri>
-      <pose>0 0 0.01 0 0 0</pose>
-      <name>turtlebot3_burger</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/MARBLE_HUSKY_SENSOR_CONFIG_1</uri>
+      <pose>0 0 0.5 0 0 0</pose>
+      <name>husky</name>
     </include>
   </world>
 </sdf>
