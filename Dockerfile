@@ -1,7 +1,6 @@
 # Base image: ROS2-Humble distribution, Ubuntu 22.04
 FROM ros:humble-ros-base-jammy
 
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root
@@ -39,27 +38,48 @@ RUN apt-get update \
     && apt-get install -y ignition-fortress \
     && apt-get install ros-humble-ros-ign-bridge -y 
 
-# Clone in Husky, Turtlebot3, and ur5 packages for ROS2 humble 
-RUN mkdir -p ~/ros2_ws/src \
-    && cd ~/ros2_ws/src \
-    && git clone https://github.com/husky/husky.git \
+# Clone in and build Husky, Turtlebot3, and ur5 packages for ROS2 humble 
+RUN mkdir -p /root/ros2_ws/src 
+WORKDIR /root/ros2_ws/src
+
+RUN git clone https://github.com/husky/husky.git \
     && cd husky \
-    && git checkout humble-devel \
-    && cd .. \
-    && git clone https://github.com/ROBOTIS-GIT/turtlebot3.git \
+    && git checkout humble-devel 
+
+RUN git clone https://github.com/ROBOTIS-GIT/turtlebot3.git \
     && cd turtlebot3 \
-    && git checkout humble \
-    && cd .. \
-    && git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git \
+    && git checkout humble 
+
+RUN git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git \
     && cd Universal_Robots_ROS2_Driver \
-    && git checkout humble \
-    && cd .. \ 
-    && rosdep install --from-paths . --ignore-src -r -y \
-    && colcon build 
+    && git checkout humble 
 
 
+# Initialize rosdep
+WORKDIR /root/ros2_ws
+RUN . /opt/ros/humble/setup.sh \
+    && apt-get update \
+    && rosdep update \
+    && rosdep install --from-paths src --ignore-src -r -y 
 
-# Set up entrypoint
+RUN apt-get update && apt-get install -y \
+    ros-humble-realtime-tools
+
+    RUN . /opt/ros/humble/setup.sh \
+    && apt-get update \
+    && colcon build --packages-skip \
+        ur_controllers \
+        ur_robot_driver \
+        ur_calibration \
+        ur_bringup \
+        ur 
+
+# Copy in SDF files for simulations
+COPY gaz_worlds_files /root/gaz_worlds_files
+
+# Initialize simulations
+RUN 
+
 COPY app.py /root/
 # COPY entrypoint.sh /root/
 # RUN chmod +x /root/entrypoint.sh
