@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y ca-certificates gnupg \
     && npm install -g @angular/cli@16.0.1
 
 
-# Gazebo Web dependencies: angular app, gazebo launch, & gazebo garden
+# Gazebo Web dependencies: angular app, gazebo launch, & gazebo fortress
 RUN apt-get update \
     && npm install -y gzweb \
     && git clone https://github.com/german-e-mas/angular-gzweb.git \
@@ -62,10 +62,7 @@ RUN . /opt/ros/humble/setup.sh \
     && rosdep update \
     && rosdep install --from-paths src --ignore-src -r -y 
 
-RUN apt-get update && apt-get install -y \
-    ros-humble-realtime-tools
-
-    RUN . /opt/ros/humble/setup.sh \
+RUN . /opt/ros/humble/setup.sh \
     && apt-get update \
     && colcon build --packages-skip \
         ur_controllers \
