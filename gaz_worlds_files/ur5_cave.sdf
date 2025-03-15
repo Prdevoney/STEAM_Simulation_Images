@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.8">
   <world name="my_custom_world">
+
     <!-- Physics settings -->
     <physics name="1ms" type="ignored">
       <max_step_size>0.001</max_step_size>
@@ -77,12 +78,12 @@
       </link>
     </model>
 
-
-
     <include>
       <uri>https://fuel.gazebosim.org/1.0/AndrejOrsula/models/ur5_rg2</uri>
       <pose>0 0 0.5 0 0 0</pose>
       <name>ur5</name>
     </include>
+
+
   </world>
 </sdf>
