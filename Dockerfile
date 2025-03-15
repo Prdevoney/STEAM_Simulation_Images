@@ -27,7 +27,11 @@ RUN apt-get update && apt-get install -y ca-certificates gnupg \
 # Web viewer dependencies: gzweb and angular app 
 RUN apt-get update \
     && npm install gzweb \
-    && git clone https://github.com/german-e-mas/angular-gzweb.git 
+    && git clone https://github.com/german-e-mas/angular-gzweb.git \
+    && cd angular-gzweb \
+    && npm install \
+    && cd .. \
+    && rm -rf /var/lib/apt/lists/*
 
 # Simulation dependencies: Ignition Fortress, Ignition Launch, and ROS-Ignition bridge
 RUN apt-get update \
