@@ -6,7 +6,6 @@ python3 app.py &
 
 # Step 2: Start Angular app
 cd angular-gzweb/
-npm install
 ng serve --host 0.0.0.0 &
 
 # Step 3: Start start simulation
