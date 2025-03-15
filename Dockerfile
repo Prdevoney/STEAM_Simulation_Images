@@ -20,25 +20,26 @@ RUN apt-get update && apt-get install -y ca-certificates gnupg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y nodejs \
-    && npm install -g @angular/cli@16.0.1
+    && npm install -g @angular/cli@16.0.1 \
+    && rm -rf /var/lib/apt/lists/*
 
 
-# Gazebo Web dependencies: angular repo, gazebo launch, & gazebo fortress
+# Web viewer dependencies: gzweb and angular app 
 RUN apt-get update \
-    && npm install -y gzweb \
-    && git clone https://github.com/german-e-mas/angular-gzweb.git \
-    && apt-get install -y libgz-launch5 lsb-release gnupg \
+    && npm install gzweb \
+    && git clone https://github.com/german-e-mas/angular-gzweb.git 
+
+# Simulation dependencies: Ignition Fortress, Ignition Launch, and ROS-Ignition bridge
+RUN apt-get update \
+    && apt-get install -y lsb-release gnupg \
     && curl -fsSL https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
     && apt-get update \
-    && sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
-    && curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
-    && apt-get update \
-    && apt-get install -y ignition-fortress \
-    && apt-get install ros-humble-ros-ign-bridge -y 
+    && apt-get install -y ignition-fortress libgz-launch5 ros-humble-ros-ign-bridge\
+    && rm -rf /var/lib/apt/lists/*
+    
 
-# Copy in SDF files for simulations
+# Copy in SDF files for premade simulations
 COPY gaz_worlds_files /root/gaz_worlds_files
 
 # Copy in the Flask app 
