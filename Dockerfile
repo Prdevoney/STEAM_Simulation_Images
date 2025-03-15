@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root
 
-# Base necessities, used to build. 
+# Base necessities, used to build environment 
 RUN apt-get update && apt-get install -y \
     python3-pip \
     curl \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y ca-certificates gnupg \
     && npm install -g @angular/cli@16.0.1
 
 
-# Gazebo Web dependencies: angular app, gazebo launch, & gazebo fortress
+# Gazebo Web dependencies: angular repo, gazebo launch, & gazebo fortress
 RUN apt-get update \
     && npm install -y gzweb \
     && git clone https://github.com/german-e-mas/angular-gzweb.git \
@@ -41,15 +41,17 @@ RUN apt-get update \
 # Copy in SDF files for simulations
 COPY gaz_worlds_files /root/gaz_worlds_files
 
-
+# Copy in the Flask app 
 COPY app.py /root/
-# COPY entrypoint.sh /root/
-# RUN chmod +x /root/entrypoint.sh
 
+# Copy in the entrypoint script
+COPY entrypoint.sh /root/
+RUN chmod +x /root/entrypoint.sh
+
+# Expose the necessary ports
 EXPOSE 5000 8080 4200 9002
 
-WORKDIR /root
-
-# ENTRYPOINT ["/root/entrypoint.sh"]
+# Run the entrypoint script
+ENTRYPOINT ["/root/entrypoint.sh"]
 
 CMD ["bash"]
