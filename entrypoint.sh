@@ -6,13 +6,15 @@ python3 app.py &
 
 # Step 2: Start Angular app
 cd angular-gzweb/
-ng serve --host 0.0.0.0 &
+echo "N" | ng serve --host 0.0.0.0 &
 
 # Step 3: Start start simulation
+cd .. 
 cd gaz_worlds_files/
 ign gazebo -v 4 turtlebot3_baylands.sdf -s &
 
 # Step 4: Launch Gazebos websocket server
+cd ..
 ign launch -v 4 /usr/share/ignition/ignition-launch5/configs/websocket.ign &
 
 
