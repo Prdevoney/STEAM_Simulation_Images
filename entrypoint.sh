@@ -17,7 +17,6 @@ ign gazebo -v 4 turtlebot3_baylands.sdf -s &
 cd ..
 ign launch -v 4 /usr/share/ignition/ignition-launch5/configs/websocket.ign &
 
-
 # Step 5: CLI web socket server for Xterm.js (most likely)
 
 
