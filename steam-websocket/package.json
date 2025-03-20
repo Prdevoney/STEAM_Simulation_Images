@@ -1,0 +1,22 @@
+{
+  "name": "steam-websocket",
+  "version": "1.0.0",
+  "description": "Websocket for user simulation cli ",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest"
+  },
+  "author": "Patrick DeVoney",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/ws": "^8.18.0",
+    "jest": "^29.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "ws": "^8.18.1"
+  }
+}

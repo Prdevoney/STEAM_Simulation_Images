@@ -4,10 +4,6 @@ set -e
 # Step 1: Start Flask app
 python3 app.py &
 
-# Step 2: Start Angular app
-cd angular-gzweb/
-echo "N" | ng serve --host 0.0.0.0 &
-
 # Step 3: Start start simulation
 cd .. 
 cd gaz_worlds_files/
