@@ -8,13 +8,16 @@ JSON
 {
     "question_id": "<question_id>",
     "question_type": "<type>",
-    "python_script": <python_script.py>,
+    "python_script": {
+      "script_name": "<question_id.py>",
+      "script_base64": <base64 content>,
+    },
     "term_type": "<terminal_type>",
-    "interactive_input": "<any valid input>"
+    "interactive_input": "<any valid input>",
 }
 ```
 ## Fields: 
-### **question_id**: (required) This is the id of the question that is being answered. It tells us what python script to run. 
+### **question_id**: (required) This is the id of the question that is being answered. 
 <table border="1">
   <tr>
     <th>"question_id" possible values</th>
@@ -54,6 +57,16 @@ JSON
     <td>python script written by the user in the Monaco editor, encode the<br> file in the frontend and send it to the users container to be executed</td>
   </tr>
 </table>
+<table border="1">
+  <tr>
+    <th>"python_script" possible values</th>
+    <th>what it's for</th>
+  </tr>
+  <tr>
+    <td><code>&lt;python_script&gt;.py</code></td>
+    <td>python script written by the user in the Monaco editor, encode the<br> file in the frontend and send it to the users container to be executed</td>
+  </tr>
+</table>
 
 ### **term_type:** (required) This is to know what terminal the process must be ran in and whether it is persistant or not
 <table border="1">
@@ -66,13 +79,17 @@ JSON
     <td>Use for questions that do not require any user <br> interaction after the question is answerd</td>
   </tr>
   <tr>
-    <td><code>active_terminal</code></td>
-    <td>Use this if the terminal is persistant meaning after the user submited their answer they will <br>either be prompted for interaction or continue to recieve data from the server. We will use <br>the question id to keep track of the terminal session. This can be expanded later to type of<br> interaction needed but for our use now with interactivity all we need is arrow key strokes</td>
+    <td><code>interactive_terminal</code></td>
+    <td>Use this if the terminal prompts the user for input after the question has been answered and the script has been ran.<br> We will use the question id to keep track of the terminal session. This can be expanded later to<br> type of interaction needed but for our use now with interactivity all we need is arrow key strokes</td>
+  </tr>
+  <tr>
+    <td><code>persistant_terminal</code></td>
+    <td>Use this if the terminal is persistant, meaning after the user submited their answer the terminal continues to <br>stream data to the client. We will use the question id to keep track of the terminal session. 
   </tr>
 </table>
 
 ### **interactive_input:** This is the input that the user gives to an interactive prompt  
-*required only on subsequent calls when:  `"term_type": "active_terminal"`*
+*required only on subsequent calls when:  `"term_type": "interactive_terminal"`*
 <table border="1">
   <tr>
     <th>"interactive_input" possible values</th>
