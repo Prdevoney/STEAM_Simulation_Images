@@ -9,8 +9,8 @@ JSON
     "question_id": "<question_id>",
     "question_type": "<type>",
     "python_script": {
-      "script_name": "<question_id.py>",
-      "script_base64": <base64 content>,
+      "script_name": "<script.py>",
+      "script_content": <Monaco editor content>,
     },
     "term_type": "<terminal_type>",
     "interactive_input": "<any valid input>",

@@ -22,7 +22,7 @@ const spawnTerm = () => {
   return term; 
 };
 
-const executeScript = (message: any) => {
+const executeScript = (script: any, term: any) => {
   // Logic for executing the python script
   return 'Python script executed successfully';
 };
@@ -39,22 +39,25 @@ wss.on('connection', (ws: WebSocket) => {
       // Question type is free response 
       if (message.question_type === 'frq') {
         console.log('Received FRQ question');
+        // Check if python script is provided
+        if (!message.python_script) {
+          console.log('No python script provided');
+          ws.send('No python script provided');
+          return;
+        }
         
         if (message.term_type === "gen_terminal") {
           try {
             // create new terminal 
             const term = spawnTerm();
-            
             // Call function to execute the python script
-            executeScript(message.python_script);
-
-            term.onData((output: any) => {
-              console.log('Output: %s', output);
-            }); 
+            const result = executeScript(message.python_script, term);
             // kill terminal after script is ran
             term.kill();
+            return result;
           } catch (e) {
-
+            console.error('Error: %s', e);
+            ws.send('Error executing python script');
           }
         } 
         else if (message.term_type === "persitant_terminal") {
@@ -73,10 +76,9 @@ wss.on('connection', (ws: WebSocket) => {
             // Call function executeScript to run the recieved python script 
             const response = executeScript(message); 
           } else {
-            // Logic for saving terminal in map with the message.question_id as the key
-            const term = terminals.get(message.question_id);
-            // Call function to execute input in the proper interactive terminal
-
+            console.log("No term_type provided");
+            ws.send('No term_type provided');
+            return; 
           }
           
         }
