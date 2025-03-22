@@ -19,17 +19,41 @@ wss.on('connection', (ws: WebSocket) => {
       console.log('Payload: %s', data);
       const message = JSON.parse(data.toString());
 
-      if (message.question_type ") {
-        const id = Date.now().toString(); 
-        console.log(`Running ${message.type}: ${message.data}`);
-
-        var term = pty.spawn(shell, [], {
-          name: 'xterm-color',
-          cols: 80,
-          rows: 30
-        });
+      // Question type is free response 
+      if (message.question_type === 'frq') {
+        console.log('Received FRQ question');
         
-        terminals.set(id, term);
+        if (message.term_type === "interactive_terminal") {
+          
+          // create a new terminal object 
+          if (!message.interactive_input) {
+            var term = pty.spawn(shell, [], {
+              name: 'xterm-color',
+              cols: 80,
+              rows: 30
+            });
+  
+            // Logic for saving terminal in map with the message.question_id as the key
+            terminals.set(message.question_id, term);
+  
+            // Call function executeScript to run the recieved python script 
+            //const response = executeScript(message); 
+          } else {
+            // Logic for saving terminal in map with the message.question_id as the key
+            const term = terminals.get(message.question_id);
+            // Call function to execute input in the proper interactive terminal
+          }
+          
+        } else if (message.term_type === "gen_terminal") {
+          var term = pty.spawn(shell, [], {
+            name: 'xterm-color',
+            cols: 80,
+            rows: 30
+          });
+          // Call function executeScript to run the recieved python script
+          //const response = executeScript(message);
+        }
+
         term.onData((output: any) => {
           ws.send(JSON.stringify({
             type: 'received output',
@@ -50,14 +74,7 @@ wss.on('connection', (ws: WebSocket) => {
 
         term.write(message.data + '\r');
 
-      } else if (message.type === 'input' && message.id) {
-        // Find the terminal for this ID
-        const term = terminals.get(message.id);
-        if (term) {
-          // Send the input to the terminal
-          term.write(message.data);
-        }
-      }
+      } 
 
     } catch (e) {
       console.error('Error: %s', e);
