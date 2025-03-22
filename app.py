@@ -1,12 +1,13 @@
 # Imports for flask server 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 # Imports to execute code and work with file system
 import subprocess
 import os
 
 app = Flask(__name__)
-
+CORS(app)
 @app.route("/")
 def index():
     return "Flask server is running!"
@@ -44,4 +45,4 @@ def execute_code():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=3030, debug=True)
