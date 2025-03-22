@@ -34,7 +34,7 @@ JSON
   </tr>
   <tr>
     <td><code>frq</code></td>
-    <td>This is for when a user creates their own code through <br>the monaco editor and it needs to be executed via the CLI</td>
+    <td>This is for when a user creates their own code through <br>the monaco editor and it needs to be executed </td>
   </tr>
   <tr>
     <td><code>multi</code></td>
@@ -62,10 +62,6 @@ JSON
     <th>what it's for</th>
   </tr>
   <tr>
-    <td><code>no_terminal</code></td>
-    <td>Use for questions that do not require a python script to be ran</td>
-  </tr>
-  <tr>
     <td><code>gen_terminal</code></td>
     <td>Use for questions that do not require any user <br> interaction after the question is answerd</td>
   </tr>
@@ -84,6 +80,6 @@ JSON
   </tr>
   <tr>
     <td><code>Any valid user input</code></td>
-    <td>This only needs to be included if the user is responding to an interactive prompt, <br>like arrow key strokes</td>
+    <td>This only needs to be included when the user is responding to an interactive prompt, <br>like arrow key strokes</td>
   </tr>
 </table>

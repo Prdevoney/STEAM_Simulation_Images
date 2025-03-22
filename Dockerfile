@@ -9,7 +9,6 @@ WORKDIR /root
 RUN apt-get update && apt-get install -y \
     python3-pip \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Simulation dependencies: Ignition Fortress, Ignition Launch, and ROS-Ignition bridge
@@ -24,16 +23,20 @@ RUN apt-get update \
 # Copy in SDF files for premade simulations
 COPY gaz_worlds_files /root/gaz_worlds_files
 
-# Install Flask & Copy Flask app 
-RUN pip3 install Flask 
-COPY app.py /root/
-
+# Set up websocket server
+COPY steam-websocket /root/steam-websocket
+RUN cd /root/steam-websocket \
+    && npm install \
+    && npm run build 
+    
 # Copy in the entrypoint script
 COPY entrypoint.sh /root/
 RUN chmod +x /root/entrypoint.sh
 
 # Expose the necessary ports
-EXPOSE 5000 8080 4200 9002
+EXPOSE 4000 9002
+# Websocket server: 4000
+# Gazebo websocket server: 9002
 
 # Run the entrypoint script
 ENTRYPOINT ["/root/entrypoint.sh"]

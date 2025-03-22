@@ -17,10 +17,9 @@ wss.on('connection', (ws: WebSocket) => {
   ws.on('message', (data: WebSocket.Data) => {
     try {
       console.log('Payload: %s', data);
-
       const message = JSON.parse(data.toString());
 
-      if (message.type === "command") {
+      if (message.question_type ") {
         const id = Date.now().toString(); 
         console.log(`Running ${message.type}: ${message.data}`);
 
