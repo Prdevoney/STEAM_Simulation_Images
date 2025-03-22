@@ -66,13 +66,13 @@ JSON
     <td>Use for questions that do not require any user <br> interaction after the question is answerd</td>
   </tr>
   <tr>
-    <td><code>interactive_terminal</code></td>
-    <td>Use this if the user will be prompted to input to a persistant terminal after submitting their answer. <br>We will use the question id to keep track of the terminal session. This can be expanded later to type of<br> interaction needed but for our use now all we need is arrow key strokes</td>
+    <td><code>active_terminal</code></td>
+    <td>Use this if the terminal is persistant meaning after the user submited their answer they will <br>either be prompted for interaction or continue to recieve data from the server. We will use <br>the question id to keep track of the terminal session. This can be expanded later to type of<br> interaction needed but for our use now with interactivity all we need is arrow key strokes</td>
   </tr>
 </table>
 
-### **interactive_input:** This is the shell command that is going to be executed in the containers os 
-*required if:  `"term_type": "interactive_terminal"`*
+### **interactive_input:** This is the input that the user gives to an interactive prompt  
+*required only on subsequent calls when:  `"term_type": "active_terminal"`*
 <table border="1">
   <tr>
     <th>"interactive_input" possible values</th>
