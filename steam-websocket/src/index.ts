@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const wss = new WebSocket.Server({ port: 4001 });
+const wss = new WebSocket.Server({ port: 4000 });
 
 console.log('Started web socket server on port 4000'); 
 // Determine the shell of the os, even though we know the conatiner is going to be Ubuntu (bash) 
