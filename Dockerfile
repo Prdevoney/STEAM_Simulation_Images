@@ -28,14 +28,14 @@ COPY steam-websocket /root/steam-websocket
 RUN cd /root/steam-websocket \
     && npm install \
     && npm run build 
-    
+
 # Copy in the entrypoint script
 COPY entrypoint.sh /root/
 RUN chmod +x /root/entrypoint.sh
 
 # Expose the necessary ports
 EXPOSE 4000 9002
-# Websocket server: 4000
+# Terminal websocket server: 4000
 # Gazebo websocket server: 9002
 
 # Run the entrypoint script
