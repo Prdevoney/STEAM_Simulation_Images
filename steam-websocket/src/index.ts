@@ -14,7 +14,7 @@ const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 const terminals = new Map(); 
 
 // Generate a new pseudo terminal with node pty 
-const spawnTerm = () => {
+function spawnTerm() {
   const term = pty.spawn(shell, [], {
     name: 'xterm-color',
     cols: 80,
@@ -22,9 +22,9 @@ const spawnTerm = () => {
     cwd: process.cwd(), 
   });
   return term; 
-};
+}
 
-const executeScript = (data: any, term: any) => {
+function executeScript (data: any, term: any) {
   // Get the temp dir 
   const tempDir = os.tmpdir(); 
 
@@ -36,7 +36,22 @@ const executeScript = (data: any, term: any) => {
 
   // Execute the python script
   term.write(`python3 ${tempFile}\r`);
-};
+}
+
+function interactiveInput (data: any, term: any) {
+  term.write(`${data.interactive_input}\r`);
+}
+
+function termOutput (term: any, ws: WebSocket) {
+  term.onData((output: any) => {
+    // Skip output if it contains the command or the directory path
+    if (output.includes("python3") || output.includes(process.cwd())) {
+      return;
+    }
+    console.log('Output: %s', output);
+    ws.send(output);
+  });
+}
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -47,10 +62,6 @@ wss.on('connection', (ws: WebSocket) => {
       console.log('Payload: %s', data);
       const message = JSON.parse(data.toString());
 
-      // Check if python script is provided
-      if (!message.python_script) {
-        console.log('No python script provided');
-      }
       // Check if question_id is provided
       if (!message.question_id) {
         console.log('No question_id provided');
@@ -58,47 +69,52 @@ wss.on('connection', (ws: WebSocket) => {
       
       if (message.term_type === "gen_terminal") {
         try {
+          // Check if python script is provided
+          if (!message.python_script) {
+            console.log('No python script provided');
+            return; 
+          }
           // create new terminal 
           const term = spawnTerm();
           // Call function to execute the python script
-          const tempFile = executeScript(message, term);
-
-          term.onData((output: any) => {
-            // Skip output if it contains the command or the directory path
-            if (output.includes("python3") || output.includes(process.cwd())) {
-              return;
-            }
-            console.log('Output: %s', output);
-            ws.send(output);
-          });
+          executeScript(message, term);
+          // Set up listener for this terminal
+          termOutput(term, ws);
         
         } catch (e) {
           console.error('Error: %s', e);
-          ws.send('Error executing python script');
         }
-      } 
-      else if (message.term_type === "persitant_terminal") {
-        
-      }
-      else if (message.term_type === "interactive_terminal") {
-        
-        // First call for interactive_terminal, create new terminal and run script 
-        if (!message.interactive_input) {
-          // create new terminal 
-          const term = spawnTerm(); 
+      } else if (message.term_type === "interactive_terminal") {
+          try {
+            // First call for interactive_terminal, create new terminal and run script 
+            if (!message.interactive_input) {
+              if (!message.python_script) {
+                console.log('No python script provided');
+                return; 
+              }
+              // create new terminal 
+              const term = spawnTerm(); 
 
-          // Logic for saving terminal in map with the message.question_id as the key
-          terminals.set(message.question_id, term);
+              // Logic for saving terminal in map with the message.question_id as the key
+              terminals.set(message.question_id, term);
 
-          // Call function executeScript to run the recieved python script 
-          const response = executeScript(message.python_script, term); 
-        }
+              // Call function executeScript to run the recieved python script 
+              executeScript(message, term); 
+              // Call function to output the terminal output to the websocket
+              termOutput(term, ws);
+            
+            } else {
+              const term = terminals.get(message.question_id);
+              interactiveInput(message, term);
+            }
+          } catch (e) {
+            console.error('Error: %s', e);
+          }
       } else {
         console.log("No term_type provided");
         ws.send('No term_type provided');
         return; 
       }
-      terminals.delete(message.question_id);
     } catch (e) {
       console.error('Error: %s', e);
     }
