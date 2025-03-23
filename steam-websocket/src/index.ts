@@ -1,6 +1,8 @@
 import * as WebSocket from 'ws';
 import * as pty from 'node-pty';
 import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const wss = new WebSocket.Server({ port: 4000 });
 
@@ -38,6 +40,7 @@ wss.on('connection', (ws: WebSocket) => {
 
       // Question type is free response 
       if (message.question_type === 'frq') {
+
         console.log('Received FRQ question');
         // Check if python script is provided
         if (!message.python_script) {
@@ -75,57 +78,17 @@ wss.on('connection', (ws: WebSocket) => {
   
             // Call function executeScript to run the recieved python script 
             const response = executeScript(message); 
-          } else {
-            console.log("No term_type provided");
-            ws.send('No term_type provided');
-            return; 
           }
           
+        } else {
+          console.log("No term_type provided");
+          ws.send('No term_type provided');
+          return; 
         }
           
         terminals.delete(message.question_id);
 
-
-      } else if (message.question_type === 'mcq') {
-        console.log('Received MCQ question');
-
-        if (message.term_type === "active_terminal") {
-          
-          // First call for interactive_terminal, create new terminal and run script 
-          if (!message.interactive_input) {
-            // create new terminal 
-            const term = spawnTerm();
-
-            // Logic for saving terminal in map with the message.question_id as the key
-            terminals.set(message.question_id, term);
-  
-            // Call function executeScript to run the recieved python script 
-            const response = executeScript(message); 
-          } else {
-            // Logic for saving terminal in map with the message.question_id as the key
-            const term = terminals.get(message.question_id);
-            // Call function to execute input in the proper interactive terminal
-
-          }
-          
-        } else if (message.term_type === "gen_terminal") {
-          try {
-            // create new terminal 
-            const term = spawnTerm();
-            // Execute script in the general terminal
-            term.write(`python3 ${message.python_script}`);
-
-            term.onData((output: any) => {
-              console.log('Output: %s', output);
-            }); 
-            // kill terminal after script is ran
-            term.kill();
-          } catch (e) {
-
-          }
-        }
       }
-
     } catch (e) {
       console.error('Error: %s', e);
     }
