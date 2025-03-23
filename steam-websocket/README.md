@@ -6,12 +6,26 @@ The web socket is used to receive messages from the client and execute the prope
 ```
 JSON
 {
+    "question_id": "<id>",
     "term_type": "<terminal_type>",
     "interactive_input": "<any valid input>",
     "python_script": "<Monaco editor content>",
 }
 ```
 ## Fields: 
+
+### **question_id:** (required) Unique string so we can keep track of the question that the request is coming from 
+<table border="1">
+  <tr>
+    <th>"question_id" possible values</th>
+    <th>what it's for</th>
+  </tr>
+  <tr>
+    <td><code>Unique string</code></td>
+    <td>Unique string for the question, use the same ID if multiple calls are made from the same question.<br> To be clear each question will have its own unique ID</td>
+  </tr>
+
+</table>
 
 ### **term_type:** (required) This is to know what terminal the process must be ran in and how the logic should be handled
 <table border="1">
@@ -34,8 +48,21 @@ JSON
   
 </table>
 
+### **python_script:** (required) This is the python script that will be executed on the server 
+<table border="1">
+  <tr>
+    <th>"python_script" possible values</th>
+    <th>what it's for</th>
+  </tr>
+  <tr>
+    <td><code>Monaco editor content</code></td>
+    <td>python script written by the user in the Monaco editor, just send <br> the content in the Monaco editor as a string in the JSON</td>
+  </tr>
+</table>
+
 ### **interactive_input:** This is the input that the user gives to an interactive prompt  
-*required only on subsequent calls to server when:  `"term_type": "interactive_terminal"`*
+*required only on subsequent calls to server when:  `"term_type": "interactive_terminal"`* <br>
+*you don't need to include `python_script` on subsequent calls*
 <table border="1">
   <tr>
     <th>"interactive_input" possible values</th>
@@ -43,19 +70,6 @@ JSON
   </tr>
   <tr>
     <td><code>Any valid user input</code></td>
-    <td>This only needs to be included when the user is responding to an interactive prompt, <br>like arrow key strokes</td>
-  </tr>
-</table>
-
-### **python_script:** This is the python script that will be executed on the server 
-*required if:  `"question_type": "frq"`*
-<table border="1">
-  <tr>
-    <th>"python_script" possible values</th>
-    <th>what it's for</th>
-  </tr>
-  <tr>
-    <td><code>&lt;python_script&gt;.py</code></td>
-    <td>python script written by the user in the Monaco editor, just send <br> the content in the Monaco editor as a string in the JSON</td>
+    <td>This only needs to be included when the user is responding <br>to an interactive prompt, like arrow key strokes</td>
   </tr>
 </table>

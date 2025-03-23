@@ -26,6 +26,9 @@ const spawnTerm = () => {
 
 const executeScript = (script: any, term: any) => {
   // Logic for executing the python script
+  
+
+
   return 'Python script executed successfully';
 };
 
@@ -38,57 +41,49 @@ wss.on('connection', (ws: WebSocket) => {
       console.log('Payload: %s', data);
       const message = JSON.parse(data.toString());
 
-      // Question type is free response 
-      if (message.question_type === 'frq') {
-
-        console.log('Received FRQ question');
-        // Check if python script is provided
-        if (!message.python_script) {
-          console.log('No python script provided');
-          ws.send('No python script provided');
-          return;
-        }
-        
-        if (message.term_type === "gen_terminal") {
-          try {
-            // create new terminal 
-            const term = spawnTerm();
-            // Call function to execute the python script
-            const result = executeScript(message.python_script, term);
-            // kill terminal after script is ran
-            term.kill();
-            return result;
-          } catch (e) {
-            console.error('Error: %s', e);
-            ws.send('Error executing python script');
-          }
-        } 
-        else if (message.term_type === "persitant_terminal") {
-          
-        }
-        else if (message.term_type === "interactive_terminal") {
-          
-          // First call for interactive_terminal, create new terminal and run script 
-          if (!message.interactive_input) {
-            // create new terminal 
-            const term = spawnTerm(); 
-
-            // Logic for saving terminal in map with the message.question_id as the key
-            terminals.set(message.question_id, term);
-  
-            // Call function executeScript to run the recieved python script 
-            const response = executeScript(message); 
-          }
-          
-        } else {
-          console.log("No term_type provided");
-          ws.send('No term_type provided');
-          return; 
-        }
-          
-        terminals.delete(message.question_id);
-
+      // Check if python script is provided
+      if (!message.python_script) {
+        console.log('No python script provided');
+        ws.send('No python script provided');
+        return;
       }
+      
+      if (message.term_type === "gen_terminal") {
+        try {
+          // create new terminal 
+          const term = spawnTerm();
+          // Call function to execute the python script
+          const result = executeScript(message.python_script, term);
+          // kill terminal after script is ran
+          term.kill();
+          return result;
+        } catch (e) {
+          console.error('Error: %s', e);
+          ws.send('Error executing python script');
+        }
+      } 
+      else if (message.term_type === "persitant_terminal") {
+        
+      }
+      else if (message.term_type === "interactive_terminal") {
+        
+        // First call for interactive_terminal, create new terminal and run script 
+        if (!message.interactive_input) {
+          // create new terminal 
+          const term = spawnTerm(); 
+
+          // Logic for saving terminal in map with the message.question_id as the key
+          terminals.set(message.question_id, term);
+
+          // Call function executeScript to run the recieved python script 
+          const response = executeScript(message.python_script, term); 
+        }
+      } else {
+        console.log("No term_type provided");
+        ws.send('No term_type provided');
+        return; 
+      }
+      terminals.delete(message.question_id);
     } catch (e) {
       console.error('Error: %s', e);
     }
