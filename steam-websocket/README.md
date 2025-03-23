@@ -2,14 +2,14 @@
 The web socket is used to receive messages from the client and execute the proper commands in the users container then send a response back to the client. 
 
 ## Requests Structure: 
-**This is how requests need to be structured when sent to the web socket, not all fields are required**
+**This is how requests need to be structured when sent to the web socket. Not all fields are required.**
 ```
 JSON
 {
     "question_id": "<id>",
     "term_type": "<terminal_type>",
-    "interactive_input": "<any valid input>",
     "python_script": "<Monaco editor content>",
+    "interactive_input": "<any valid input>",
 }
 ```
 ## Fields: 
@@ -35,11 +35,7 @@ JSON
   </tr>
   <tr>
     <td><code>gen_terminal</code></td>
-    <td>Use for questions that do not require any user <br> interaction after the question is answerd</td>
-  </tr>
-  <tr>
-    <td><code>persistant_terminal</code></td>
-    <td>Use this if the terminal is persistant, meaning after the user submited their answer the terminal continues to <br>stream data to the client. We will use the question id to keep track of the terminal session. 
+    <td>Use for questions that do not require any user <br> interaction after the code has been submitted</td>
   </tr>
   <tr>
     <td><code>interactive_terminal</code></td>
@@ -56,7 +52,7 @@ JSON
   </tr>
   <tr>
     <td><code>Monaco editor content</code></td>
-    <td>python script written by the user in the Monaco editor, just send <br> the content in the Monaco editor as a string in the JSON</td>
+    <td>python script written by the user in the Monaco editor, just JSON.stringify() <br> the content in the Monaco editor and send it in the json directly</td>
   </tr>
 </table>
 

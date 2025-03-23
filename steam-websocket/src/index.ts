@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const wss = new WebSocket.Server({ port: 4000 });
+const wss = new WebSocket.Server({ port: 4001 });
 
 console.log('Started web socket server on port 4000'); 
 // Determine the shell of the os, even though we know the conatiner is going to be Ubuntu (bash) 
@@ -19,17 +19,23 @@ const spawnTerm = () => {
     name: 'xterm-color',
     cols: 80,
     rows: 30,
-    cwd: '/mnt/c/Users/PRDev/OneDrive - University of Central Florida/UCF/UCF Spring 2025/COP_4935/STEAM_Simulation_Images/python_scripts', 
+    cwd: process.cwd(), 
   });
   return term; 
 };
 
-const executeScript = (script: any, term: any) => {
-  // Logic for executing the python script
-  
+const executeScript = (data: any, term: any) => {
+  // Get the temp dir 
+  const tempDir = os.tmpdir(); 
 
+  // Create temp python file
+  const tempFile = path.join(tempDir, 'temp_script.py');
 
-  return 'Python script executed successfully';
+  // Add 'python_script' to the temp python file
+  fs.writeFileSync(tempFile, data.python_script);
+
+  // Execute the python script
+  term.write(`python3 ${tempFile}\r`);
 };
 
 wss.on('connection', (ws: WebSocket) => {
@@ -44,8 +50,10 @@ wss.on('connection', (ws: WebSocket) => {
       // Check if python script is provided
       if (!message.python_script) {
         console.log('No python script provided');
-        ws.send('No python script provided');
-        return;
+      }
+      // Check if question_id is provided
+      if (!message.question_id) {
+        console.log('No question_id provided');
       }
       
       if (message.term_type === "gen_terminal") {
@@ -53,10 +61,17 @@ wss.on('connection', (ws: WebSocket) => {
           // create new terminal 
           const term = spawnTerm();
           // Call function to execute the python script
-          const result = executeScript(message.python_script, term);
-          // kill terminal after script is ran
-          term.kill();
-          return result;
+          const tempFile = executeScript(message, term);
+
+          term.onData((output: any) => {
+            // Skip output if it contains the command or the directory path
+            if (output.includes("python3") || output.includes(process.cwd())) {
+              return;
+            }
+            console.log('Output: %s', output);
+            ws.send(output);
+          });
+        
         } catch (e) {
           console.error('Error: %s', e);
           ws.send('Error executing python script');
