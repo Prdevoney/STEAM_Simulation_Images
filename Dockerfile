@@ -34,8 +34,8 @@ COPY entrypoint.sh /root/
 RUN chmod +x /root/entrypoint.sh
 
 # Expose the necessary ports
-EXPOSE 4000 9002
-# Terminal websocket server: 4000
+EXPOSE 8002 9002
+# Terminal websocket server: 8002
 # Gazebo websocket server: 9002
 
 # Run the entrypoint script

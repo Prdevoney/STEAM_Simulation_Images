@@ -4,9 +4,9 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const wss = new WebSocket.Server({ port: 4000 });
+const wss = new WebSocket.Server({ port: 8002 });
 
-console.log('Started web socket server on port 4000'); 
+console.log('Started web socket server on port 8002'); 
 // Determine the shell of the os, even though we know the conatiner is going to be Ubuntu (bash) 
 const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
@@ -30,6 +30,9 @@ function executeScript (data: any, term: any) {
 
   // Create temp python file
   const tempFile = path.join(tempDir, 'temp_script.py');
+
+  // Make python script executable 
+  fs.chmodSync(tempFile, '755');
 
   // Add 'python_script' to the temp python file
   fs.writeFileSync(tempFile, data.python_script);
@@ -55,7 +58,7 @@ function termOutput (term: any, ws: WebSocket) {
 
 wss.on('connection', (ws: WebSocket) => {
 
-  ws.send('Connected to TypeScript WebSocket Server on port 4000');
+  ws.send('Connected to TypeScript WebSocket Server on port 8002');
 
   ws.on('message', (data: WebSocket.Data) => {
     try {
