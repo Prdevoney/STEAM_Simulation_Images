@@ -20,6 +20,9 @@ RUN apt-get update \
     && apt-get install -y ignition-fortress libgz-launch5 ros-humble-ros-ign-bridge\
     && rm -rf /var/lib/apt/lists/*
     
+# Source ROS2 Humble 
+RUN source /opt/ros/humble/setup.bash
+
 # Copy in SDF files for premade simulations
 COPY test_world_image/gaz_worlds_files /root/gaz_worlds_files
 
