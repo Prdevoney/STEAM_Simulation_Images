@@ -31,11 +31,11 @@ function executeScript (data: any, term: any) {
   // Create temp python file
   const tempFile = path.join(tempDir, 'temp_script.py');
 
-  // Make python script executable 
-  fs.chmodSync(tempFile, '755');
-
   // Add 'python_script' to the temp python file
   fs.writeFileSync(tempFile, data.python_script);
+
+  // Make python script executable 
+  fs.chmodSync(tempFile, '755');
 
   // Execute the python script
   term.write(`python3 ${tempFile}\r`);
