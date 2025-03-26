@@ -48,7 +48,7 @@ function interactiveInput (data: any, term: any) {
 function termOutput (term: any, ws: WebSocket) {
   term.onData((output: any) => {
     // Skip output if it contains the command or the directory path
-    if (output.includes("python3") || output.includes(process.cwd())) {
+    if (output.includes("python3") || output.includes(process.cwd()) || output.includes("root")) {
       return;
     }
     console.log('Output: %s', output);
