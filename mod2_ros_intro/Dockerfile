@@ -39,7 +39,7 @@ RUN cd /root/steam-websocket \
     && npm run build 
 
 # Copy in the entrypoint script
-COPY test_world_image/entrypoint.sh /root/
+COPY mod2_ros_intro/entrypoint.sh /root/
 RUN chmod +x /root/entrypoint.sh
 
 # Expose the necessary ports
