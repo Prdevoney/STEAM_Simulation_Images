@@ -20,8 +20,8 @@ RUN apt-get update \
     && apt-get install -y ignition-fortress libgz-launch5 ros-humble-ros-ign-bridge\
     && rm -rf /var/lib/apt/lists/*
 
-# Copy in SDF files for premade simulations
-COPY test_world_image/gaz_worlds_files /root/gaz_worlds_files
+# Copy in python scripts 
+COPY mod2_ros_intro/python_scripts /root/python_scripts
 
 # Install Node.js 
 RUN apt-get update && apt-get install -y ca-certificates gnupg \
