@@ -17,4 +17,8 @@ ros2 run ros_ign_bridge parameter_bridge /model/turtlebot3_burger/cmd_vel@geomet
 cd steam-websocket 
 npm start &
 
+cd .. 
+cd steam-healthcheck
+npm start &
+
 tail -f /dev/null 
