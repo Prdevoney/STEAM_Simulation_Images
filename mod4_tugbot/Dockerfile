@@ -21,7 +21,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy in SDF files for premade simulations
-COPY test_world_image/gaz_worlds_files /root/gaz_worlds_files
+COPY mod4_tugbot/gaz_worlds_files /root/gaz_worlds_files
+# Copy files for Teleop control of the Tugbot
+COPY mod4_tugbot/teleop_scritp /root/teleop_script
+# Copy in python scripts 
+COPY mod3_robot_arm/python_scripts /root/python_scripts
+
 
 # Install Node.js 
 RUN apt-get update && apt-get install -y ca-certificates gnupg \
