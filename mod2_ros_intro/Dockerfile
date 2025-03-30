@@ -38,14 +38,21 @@ RUN cd /root/steam-websocket \
     && npm install \
     && npm run build 
 
+# Health check for load balancer 
+COPY steam-healthcheck /root/steam-healthcheck
+RUN cd /root/steam-healthcheck \
+    && npm install \
+    && npm run build
+
 # Copy in the entrypoint script
 COPY mod2_ros_intro/entrypoint.sh /root/
 RUN chmod +x /root/entrypoint.sh
 
 # Expose the necessary ports
-EXPOSE 8002 9002
-# Terminal websocket server: 8002
-# Gazebo websocket server: 9002
+EXPOSE 7002 8002 9002 
+# 7002: HTTP health check for load balancer
+# 8002: Terminal websocket server
+# 9002: Gazebo websocket server
 
 # Run the entrypoint script
 ENTRYPOINT ["/root/entrypoint.sh"]
