@@ -11,7 +11,7 @@ ign launch -v 4 /usr/share/ignition/ignition-launch5/configs/websocket.ign &
 # Step 3: Launch ROS2 bridge (different for each simulation) 
 # 3a:
 source /opt/ros/humble/setup.bash
- ros2 run ros_ign_bridge parameter_bridge /world/world_demo/model/tugbot/link/scan_front/sensor/scan_front/scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan &	
+ros2 run ros_ign_bridge parameter_bridge /world/world_demo/model/tugbot/link/scan_front/sensor/scan_front/scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan &	
 # 3b:
 source /opt/ros/humble/setup.bash
 run ros_ign_bridge parameter_bridge /model/tugbot/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist &	

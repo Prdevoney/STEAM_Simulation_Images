@@ -27,7 +27,6 @@ COPY mod4_tugbot/teleop_script /root/teleop_script
 # Copy in python scripts 
 COPY mod3_robot_arm/python_scripts /root/python_scripts
 
-
 # Install Node.js 
 RUN apt-get update && apt-get install -y ca-certificates gnupg \
     && mkdir -p /etc/apt/keyrings \
