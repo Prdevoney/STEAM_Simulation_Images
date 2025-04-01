@@ -13,7 +13,7 @@ const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
 // Start script for each potential simulation 
 const simulation_script_map: Record<string, string> = {
-  "test_world_image": "ign gazebo -r gaz_worlds_files/turtlebot3_baylands.sdf", // test_world_image
+  "test_world_image": "ign gazebo -r /root/gaz_worlds_files/turtlebot3_baylands.sdf", // test_world_image
   "1LjViNIEB14XNArQtwaP": "", // mod2_ros_intro
   "neOI52gdX1HInFQgE8Mp": "", // mod3_robot_arm
   "bWSwj8u9RfeRd69jDkQ1": "", // mod4_tugbot
@@ -51,25 +51,32 @@ function executeScript (data: any, term: any) {
   fs.chmodSync(tempFile, '755');
 
   // clear terminal of anything that may be running 
-  term.write("\x03\r");
+  // term.write("\x03\r");
 
-  // Execute the python script
-  term.write(`python3 ${tempFile}\r`);
+  // setTimeout(() => {
+    // Execute the python script
+    term.write(`python3 ${tempFile}\r`);
+    console.log(`ran: python3 ${tempFile}`);
+  // }, 2000); // Wait for 2 second before executing the script
+  
 }
 
 function executeStartScript (data: any, term: any) {
-  const script = simulation_script_map[data.module_id]; 
+  const start_script = simulation_script_map[data.module_id]; 
+  console.log(start_script); 
   if (data.command === "restart") {
     if (terminals.has(gen_key)) {
       const gen_term = terminals.get(gen_key);
       gen_term.write("\x03\r");
     }
     term.write("\x03\r");
-    term.write(`${script}\r`);
+    setTimeout(() => {
+      term.write(`${start_script}\r`);
+    },1000); // Wait for 1 second before executing the script
   }
   else if (data.command === "start") {
-    term.write("\x03\r");
-    term.write(`${script}\r`);
+    console.log('Starting simulation');
+    term.write(`${start_script}\r`);
   }
 }
 
@@ -118,6 +125,7 @@ wss.on('connection', (ws: WebSocket) => {
             const term = spawnTerm();
             terminals.set(sim_key, term);
             executeStartScript(message, term);
+            termOutput(term, ws);
           }
         
         } catch (e) {
@@ -134,6 +142,7 @@ wss.on('connection', (ws: WebSocket) => {
               if (!terminals.has(gen_key)) {
                 // create new terminal 
                 const term = spawnTerm(); 
+                console.log('Created new terminal for general terminal');
                 // Logic for saving terminal in map with the message.question_id as the key
                 terminals.set(gen_key, term);
                 // Call function executeScript to run the recieved python script 
@@ -143,6 +152,7 @@ wss.on('connection', (ws: WebSocket) => {
               } else {
                 // If the terminal already exists, get it from the map
                 const term = terminals.get(gen_key);
+                console.log("got the existing gen_terminal");
                 // Call function executeScript to run the recieved python script 
                 executeScript(message, term); 
                 // Call function to output the terminal output to the websocket
