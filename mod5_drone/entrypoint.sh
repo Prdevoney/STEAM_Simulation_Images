@@ -1,28 +1,25 @@
 #!/bin/bash
 set -e
 
-# Step 1: Start start simulation
-ign gazebo -v 4 -r /usr/share/ignition/ignition-gazebo6/worlds/multicopter_velocity_control.sdf -s &
-
-# Step 2: Launch Gazebos websocket server
+# Step 1: Launch Gazebos websocket server
 ign launch -v 4 /usr/share/ignition/ignition-launch5/configs/websocket.ign &
 
-# Step 3: Launch ROS2 bridge (different for each simulation) 
-# 3a: 
+# Step 2: Launch ROS2 bridge (different for each simulation) 
+# 2a: 
 source /opt/ros/humble/setup.bash
 ros2 run ros_ign_bridge parameter_bridge /X4/gazebo/command/twist@geometry_msgs/msg/Twist@ignition.msgs.Twist  &	
-# 3b:
+# 2b:
 source /opt/ros/humble/setup.bash
 ros2 run ros_ign_bridge parameter_bridge /X3/gazebo/command/twist@geometry_msgs/msg/Twist@ignition.msgs.Twist &
-# 3c:
+# 2c:
 source /opt/ros/humble/setup.bash
 ros2 run ros_ign_bridge parameter_bridge /world/multicopter/model/X4/link/base_link/sensor/camera_front/camera_info@sensor_msgs/msg/CameraInfo@ignition.msgs.CameraInfo &
 
-# Step 4: CLI web socket server 
+# Step 3: CLI web socket server 
 cd steam-websocket 
 npm start &
 
-# Step 5: Start HTTP health check server
+# Step 4: Start HTTP health check server
 cd .. 
 cd steam-healthcheck
 npm start &

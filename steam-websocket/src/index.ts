@@ -3,7 +3,6 @@ import * as pty from 'node-pty';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import { exec } from 'child_process';
 
 const wss = new WebSocket.Server({ port: 8002 });
 
@@ -13,11 +12,11 @@ const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
 // Start script for each potential simulation 
 const simulation_script_map: Record<string, string> = {
-  "test_world_image": "ign gazebo -r /root/gaz_worlds_files/turtlebot3_baylands.sdf", // test_world_image
-  "1LjViNIEB14XNArQtwaP": "", // mod2_ros_intro
-  "neOI52gdX1HInFQgE8Mp": "", // mod3_robot_arm
-  "bWSwj8u9RfeRd69jDkQ1": "", // mod4_tugbot
-  "hfQiob6b3V4WwvgcHyTf":"", // mod5_drone
+  "test_world_image": "ign gazebo -r /root/gaz_worlds_files/turtlebot3_baylands.sdf -s", // test_world_image
+  "1LjViNIEB14XNArQtwaP": "ign gazebo -r - v 4 /usr/share/ignition/ignition-gazebo6/worlds/linear_battery_demo.sdf -s", // mod2_ros_intro
+  "neOI52gdX1HInFQgE8Mp": "ign gazebo -v 4 -r /usr/share/ignition/ignition-gazebo6/worlds/joint_trajectory_controller.sdf -s", // mod3_robot_arm
+  "bWSwj8u9RfeRd69jDkQ1": "ign gazebo -v 4 -r /root/gaz_worlds_files/tugbot_warehouse.sdf -s", // mod4_tugbot
+  "hfQiob6b3V4WwvgcHyTf": "ign gazebo -v 4 -r /usr/share/ignition/ignition-gazebo6/worlds/multicopter_velocity_control.sdf -s", // mod5_drone
 };
 
 const sim_key = "simulation_key"; 
@@ -50,15 +49,9 @@ function executeScript (data: any, term: any) {
   // Make python script executable 
   fs.chmodSync(tempFile, '755');
 
-  // clear terminal of anything that may be running 
-  // term.write("\x03\r");
-
-  // setTimeout(() => {
-    // Execute the python script
-    term.write(`python3 ${tempFile}\r`);
-    console.log(`ran: python3 ${tempFile}`);
-  // }, 2000); // Wait for 2 second before executing the script
-  
+  // Execute the python script
+  term.write(`python3 ${tempFile}\r`);
+  console.log(`ran: python3 ${tempFile}`);
 }
 
 function executeStartScript (data: any, term: any) {
