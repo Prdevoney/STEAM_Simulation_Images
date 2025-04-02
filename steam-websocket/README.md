@@ -2,17 +2,20 @@
 The web socket is used to receive messages from the client and execute the proper commands in the users container then send a response back to the client. 
 
 ## Requests Structure: 
-**This is how requests need to be structured when sent to the web socket. Not all fields are required.**
+**This is how requests need to be structured when sent to the web socket. Not all fields are required.**<br>
+`ws://<gateway_ip_address>/<user_id>/<module_id>/command`
+
 ```
 JSON
 {
     "term_type": "<terminal_type>",
-    "module_id": "<mod_id>", 
+    "module_id": "<module_id>", 
     "command": "<command>", 
     "python_script": "<Monaco editor content>",
     "interactive_input": "<any valid input>",
 }
 ```
+
 ## Fields: 
 
 ### **`term_type:`** (required) This is to know what terminal the process must be ran in and how the logic should be handled
