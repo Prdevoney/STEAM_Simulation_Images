@@ -6,45 +6,63 @@ The web socket is used to receive messages from the client and execute the prope
 ```
 JSON
 {
-    "question_id": "<id>",
     "term_type": "<terminal_type>",
+    "module_id": "<mod_id>", 
+    "command": "<command>", 
     "python_script": "<Monaco editor content>",
     "interactive_input": "<any valid input>",
 }
 ```
 ## Fields: 
 
-### **question_id:** (required) Unique string so we can keep track of the question that the request is coming from 
-<table border="1">
-  <tr>
-    <th>"question_id" possible values</th>
-    <th>what it's for</th>
-  </tr>
-  <tr>
-    <td><code>Unique string</code></td>
-    <td>Unique string for the question, use the same ID if multiple calls are made from the same question.<br> To be clear each question will have its own unique ID</td>
-  </tr>
-
-</table>
-
-### **term_type:** (required) This is to know what terminal the process must be ran in and how the logic should be handled
+### **`term_type:`** (required) This is to know what terminal the process must be ran in and how the logic should be handled
 <table border="1">
   <tr>
     <th>"term_type" possible values</th>
     <th>what it's for</th>
   </tr>
   <tr>
-    <td><code>gen_terminal</code></td>
-    <td>Use for questions that do not require any user <br> interaction after the code has been submitted</td>
+    <td><code>simulation_terminal</code></td>
+    <td>Use this if you are starting or restarting a simulation</td>
   </tr>
   <tr>
-    <td><code>interactive_terminal</code></td>
-    <td>Use this if the terminal prompts the user for input after the question has been answered and the script has been run.<br> We will use the question id to keep track of the terminal session. This can be expanded later to<br> type of interaction needed but for our use now with interactivity all we need is arrow key strokes</td>
+    <td><code>general_terminal</code></td>
+    <td>Use this if you are executing users code</td>
   </tr>
   
 </table>
 
-### **python_script:** (required) This is the python script that will be executed on the server 
+### **`module_id`:** (required) Unique string so we can keep track of the module 
+<table border="1">
+  <tr>
+    <th>"module_id" possible values</th>
+    <th>what it's for</th>
+  </tr>
+  <tr>
+    <td><code>Unique string</code></td>
+    <td>The unique ID used to identify each module</td>
+  </tr>
+
+</table>
+
+### **`command:`** This is to start or restart a simulation
+<table border="1">
+  <tr>
+    <th>"command" possible values</th>
+    <th>what it's for</th>
+  </tr>
+  <tr>
+    <td><code>start</code></td>
+    <td>Use this if you starting the simulation for the first time this current module</td>
+  </tr>
+  <tr>
+    <td><code>restart</code></td>
+    <td>Use this if you are restarting (reseting) the simulation</td>
+  </tr>
+  
+</table>
+
+### **`python_script:`** This is the python script that will be executed on the server 
 <table border="1">
   <tr>
     <th>"python_script" possible values</th>
@@ -56,9 +74,9 @@ JSON
   </tr>
 </table>
 
-### **interactive_input:** This is the input that the user gives to an interactive prompt  
-*required only on subsequent calls to server when:  `"term_type": "interactive_terminal"`* <br>
-*you don't need to include `python_script` on subsequent calls*
+### **`interactive_input:`** This is the input that the user gives to an interactive prompt  
+*required only on subsequent calls to server when user is promped for input and `"term_type": "general_terminal"`* <br>
+*you don't need to include the `python_script` on calls that include `interactive_input`*
 <table border="1">
   <tr>
     <th>"interactive_input" possible values</th>
@@ -69,3 +87,43 @@ JSON
     <td>This only needs to be included when the user is responding <br>to an interactive prompt, like arrow key strokes</td>
   </tr>
 </table>
+
+
+## Sample Calls: 
+
+### Starting simulation: 
+```
+{
+	"term_type": "simulation_terminal",
+	"module_id": "test_world_image", 
+	"command": "start", 
+}
+```
+
+### Restarting simulation: 
+```
+{
+  "term_type": "simulation_terminal", 
+  "module_id": "test_world_image", 
+  "command": "restart", 
+}
+```
+
+### Executing user code: 
+```
+{
+  "term_type": "general_terminal",
+  "module_id": "test_world_image", 
+  "python_script": "<monaco editor content>", 
+}
+```
+
+### Sending user input to answer python_script prompt: 
+```
+{
+  "term_type": "general_terminal",
+  "module_id": "test_world_image", 
+  "python_script": "", 
+  "interactive_input": "<any valid user input>", 
+}
+```
