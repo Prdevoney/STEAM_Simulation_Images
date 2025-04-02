@@ -7,7 +7,10 @@
       <real_time_factor>1</real_time_factor>
       <max_contacts>10</max_contacts>
     </physics>
-    <plugin name='ignition::gazebo::systems::Physics' filename='libignition-gazebo-physics-system.so'>    <plugin name='ignition::gazebo::systems::UserCommands' filename='libignition-gazebo-user-commands>    <plugin name='ignition::gazebo::systems::SceneBroadcaster' filename='libignition-gazebo-scene-bro>    <plugin name='ignition::gazebo::systems::Imu' filename='ignition-gazebo-imu-system'/>
+    <plugin name='ignition::gazebo::systems::Physics' filename='libignition-gazebo-physics-system.so'/>
+    <plugin name='ignition::gazebo::systems::UserCommands' filename='libignition-gazebo-user-commands-system.so'/>
+    <plugin name='ignition::gazebo::systems::SceneBroadcaster' filename='libignition-gazebo-scene-broadcaster-system.so'/>
+    <plugin name='ignition::gazebo::systems::Imu' filename='ignition-gazebo-imu-system'/>
     <plugin name='ignition::gazebo::systems::Sensors' filename='ignition-gazebo-sensors-system'>
       <render_engine>ogre2</render_engine>
     </plugin>
@@ -363,4 +366,4 @@
       <static>true</static>
     </include>
   </world>
-
+</sdf>
